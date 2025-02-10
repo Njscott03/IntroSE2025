@@ -1,11 +1,11 @@
 # Our Team
-Caleb Stockton - cls1268 - Cable07 
+Caleb Stockton - cls1268 - Cable07 (backend)
 
-Terrance Moncure - tdm594 - TJMonc
+Terrance Moncure - tdm594 - TJMonc (backend)
 
-Chandler Bryant - ncb211 - steameam
+Chandler Bryant - ncb211 - steameam (frontend)
 
-Noah Scott - njs283 - Njscott03
+Noah Scott - njs283 - Njscott03 (frontend)
 
 # Languages
 We intend on using Django as our backend language and intend on either using Javascript or HTML for our frontend language.
