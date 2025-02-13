@@ -12,3 +12,6 @@ We intend on using Django as our backend language and intend on either using Jav
 
 # Description
 The overall purpose of our software is to be a convenient e-commerce platform allowing users to create an account and they will be able to buy items from other users and put items of their own up for sale. 
+
+# Pull Request
+The purpose of this new branch is simply to utilize the "pull request" functionality of GitHub
