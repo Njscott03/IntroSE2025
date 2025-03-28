@@ -8,9 +8,10 @@
 </head>
 <body >
     <h1>Empty HTML File</h1>
-    <form method="POST" action="/create/">
+    <form method="POST">
         {% csrf_token %}
-    <button type="submit", name="make account">make new account</button>
+        <button onclick="location.href='create/'" type="button">New Account</button>        
     </form>
+
 </body>
 </html>

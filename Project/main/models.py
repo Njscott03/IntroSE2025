@@ -27,7 +27,6 @@ class Order(models.Model):
     date_bought=models.DateField()
     status = models.CharField(max_length=50)
     totalAmount = models.FloatField(default=0.0)
-    s = User(balance=1.2)
 
 
 
