@@ -7,6 +7,7 @@ class User(models.Model):
     email = models.EmailField()
     role = models.SmallIntegerField() #0 = no account 1 = buyer 2 = seller 3 = admin
     balance = models.BigIntegerField(default=0)
+    approved = models.BooleanField(default=False)
     
 class Item(models.Model):
     category = models.CharField(max_length=100)
@@ -14,6 +15,8 @@ class Item(models.Model):
     stock = models.IntegerField(default=0)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
     date_added=models.DateField()
+    approved = models.BooleanField(default=False)
+
     
 class Cart(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
