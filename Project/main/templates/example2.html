@@ -1,0 +1,9 @@
+{%block title%}Create New Account{%endblock%}
+{%block content%}
+Create page
+<form method="POST" action="/create/" >
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit", name="save">Create New</button>
+</form>
+{%endblock%}
