@@ -9,6 +9,10 @@ class User(models.Model):
     role = models.SmallIntegerField() #0 = no account 1 = buyer 2 = seller 3 = admin
     balance = models.FloatField(default=0)
     approved = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.username
+
 class Item(models.Model):
     itemID = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -20,6 +24,10 @@ class Item(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
     date_added=models.DateField()
     approved = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.name
+    
 
     
 class Cart(models.Model):
