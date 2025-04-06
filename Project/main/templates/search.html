@@ -1,0 +1,24 @@
+{% block content%}
+
+<form method = "POST">
+    {% csrf_token %}
+
+<input type="text" id="search-input" placeholder="Search for products..." name="search" value="search">
+<button id="search-btn" type="button">Search</button>
+</form>
+
+{% for item in items %}
+<section class="product-listings">
+    <!-- Example Product Card -->
+    <article class="product-card">
+      <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
+      <h2>{{item.name}}</h2>
+      <p>{{item.description}}.</p>
+      <p class="price">{{item.price}}</p>
+      <button type="button">Add to Cart</button>
+    </article>
+    <!-- Additional product cards will be dynamically added here -->
+  </section>
+{% endfor %}
+
+{% endblock content %}

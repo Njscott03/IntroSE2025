@@ -1,8 +1,17 @@
 {%block title%}<h1>Create New Account</h1>{%endblock%}
 {%block content%}
+
 <form method="POST" action="/create/" >
     {% csrf_token %}
     {{form.as_p}}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+    
+    {% endif %}
     <button type="submit", name="save">Submit</button>
 </form>
 {%endblock%}
