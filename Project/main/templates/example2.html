@@ -1,9 +1,8 @@
-{%block title%}Create New Account{%endblock%}
+{%block title%}<h1>Create New Account</h1>{%endblock%}
 {%block content%}
-Create page
 <form method="POST" action="/create/" >
     {% csrf_token %}
     {{form.as_p}}
-    <button type="submit", name="save">Create New</button>
+    <button type="submit", name="save">Submit</button>
 </form>
 {%endblock%}
