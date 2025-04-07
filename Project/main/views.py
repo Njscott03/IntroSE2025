@@ -6,11 +6,13 @@ from django.db.models import Q
 import random
 # Create your views here.
 def home(request):
-    return render(request, "index.html")
+    isLoggedIn = 0
+    return render(request, "index.html", {'isLoggedIn': isLoggedIn})
 
 def mainpage(request, userID):
+    isLoggedIn = 1
     userData = User.objects.get(userID=userID)
-    return render(request, "example3.html", {"userData": userData})
+    return render(request, "index.html", {"userData": userData})
 
 def create(request):
     idIsValid = False

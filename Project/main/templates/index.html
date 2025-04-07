@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +13,10 @@
   <header>
     <div class="logo">
       <!-- Using header styling as per SRS (14pt bold New Roman) -->
+      {% if userData.username %}
+      <h1>You are logged in as {{userData.username}}</h1>
+      {%else%}
+      {% endif %}
       <h1>My E-Commerce</h1>
     </div>
     <nav>
@@ -59,4 +62,4 @@
   <!-- Link to external JavaScript file if needed -->
   <script src="js/script.js"></script>
 </body>
-</html>
+{% endblock content %}
