@@ -1,15 +1,5 @@
+{%extends base.html%}
 {% block content%}
-
-<ul>
-  {%if not userData.userID%}
-    <li><a href="/">Home</a></li>
-    <li><a href="#">Login</a></li>
-    <li><a href="/create">Register</a></li>
-  {%else%}
-    <li><a href="/{{userData.userID}}/main">Home</a></li>
-
-</ul>
-{%endif%}
 
 
 <form method = "POST">

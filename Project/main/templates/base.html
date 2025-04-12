@@ -1,0 +1,34 @@
+<header>
+    <div class="logo">
+      <!-- Using header styling as per SRS (14pt bold New Roman) -->
+      {% if userData.username %}
+      <h1>You are logged in as {{userData.username}}</h1>
+      {% endif %}
+      <h1>My E-Commerce</h1>
+    </div>
+    <nav>
+        <ul>
+            {%if not userData.userID%}
+              <li><a href="/">Home</a></li>
+              <li><a href="/login">Login</a></li>
+              <li><a href="/create">Register</a></li>
+            {%elif not userData.approved%}
+                <li><a href="/">Home</a></li>
+
+                <h1 style="color:red">
+                    {{userData.username}} has not been approved.<br>
+                     Please wait until an admin approves your account</h1>
+                {%block notApproved%}
+                {%endblock notApproved%}
+            {%else%}
+              <li><a href="/{{userData.userID}}/main">Home</a></li>
+          
+          </ul>
+          {%endif%}
+    </nav>
+  </header>
+{%if not userData.userID or userData.approved%}
+  {%block content%}
+  {%endblock content%}
+{%endif%}
+

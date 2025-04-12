@@ -1,6 +1,8 @@
-{%block title%}<h1>Login</h1>{%endblock%}
+{% extends "base.html" %}
 
 {% block content %}
+{%block title%}<h1>Login</h1>{%endblock%}
+
 <form method="POST" action = "/login/">
     {%csrf_token%}
 
@@ -17,7 +19,5 @@
     <button type="submit", name="save">Submit</button>
 
 </form>
-
-
 
 {% endblock content %}

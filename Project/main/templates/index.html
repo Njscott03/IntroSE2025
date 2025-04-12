@@ -1,4 +1,8 @@
+
+{% extends "base.html" %}
 {% block content %}
+
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,25 +14,6 @@
 </head>
 <body>
   <!-- Header Section: Contains the logo and navigation bar -->
-  <header>
-    <div class="logo">
-      <!-- Using header styling as per SRS (14pt bold New Roman) -->
-      {% if userData.username %}
-      <h1>You are logged in as {{userData.username}}</h1>
-      {% endif %}
-      <h1>My E-Commerce</h1>
-    </div>
-    <nav>
-      <ul>
-          <li><a href="main">Home</a></li>
-          {% if not userData.username %}
-
-          <li><a href="/login">Login</a></li>
-          <li><a href="/create">Register</a></li>
-        {%endif%}
-      </ul>
-    </nav>
-  </header>
 
   <!-- Main Content Area: Search bar and product listings placeholder -->
   <main>
