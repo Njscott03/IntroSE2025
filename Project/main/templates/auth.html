@@ -1,0 +1,31 @@
+{%extends 'base.html'%}
+{%block content%}
+    <form method="POST" action="">
+        {% csrf_token %}
+
+    <ul>
+        {%if items%}
+            {%for item in items.all%}
+            <li><input type="checkbox" value="approved" name="a{{item.itemID}}"><p>Accept</p><br>
+                <input type="checkbox" value="rejected" name="r{{item.itemID}}"><p>Reject</p><br>
+                <article class="product-card">
+                    <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
+                    <h5>{{item.name}}</h5>
+                    <p>{{item.description}}.</p>
+                    <p class="price">${{item.price}}</p>
+                  </article>
+            </li>
+            {%endfor%}
+        {%else%}
+            {%for user in users.all%}
+            <li>
+                <h4>Name: {{user.username}}&emsp;Email: {{user.email}}</h4>
+                <input type="checkbox" value="approved" name="a{{user.userID}}">Accept<br>
+                <input type="checkbox" value="rejected" name="r{{user.userID}}">Reject<br>
+            </li>
+            {%endfor%}
+        {%endif%}
+    </ul>
+    <button type="submit", name="save", value="save">Submit</button>
+    </form>
+{%endblock content%}

@@ -91,3 +91,18 @@ def login(request):
     else:
         form = Login(request.POST)
     return render(request, "login.html", {"form":form})
+
+def authUsers(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    users = User.objects.filter(approved=False)
+    if request.method == "POST":
+        if request.POST.get("save"):
+            for user in users.all():
+                if request.POST.get("a" + str(user.userID)) == "approved":
+                    user.approved = True
+                    user.save()
+
+                elif request.POST.get("r" + str(user.userID)) == "rejected":
+                    user.delete()
+        
+    return render(request, "auth.html", context={"users":users, "userData":userData})
