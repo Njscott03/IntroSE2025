@@ -6,7 +6,7 @@ class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=200)
     email = models.EmailField()
-    role = models.SmallIntegerField() #0 = no account 1 = buyer 2 = seller 3 = admin
+    role = models.SmallIntegerField()
     balance = models.FloatField(default=0)
     approved = models.BooleanField(default=False)
     

@@ -15,15 +15,17 @@
       <!-- Using header styling as per SRS (14pt bold New Roman) -->
       {% if userData.username %}
       <h1>You are logged in as {{userData.username}}</h1>
-      {%else%}
       {% endif %}
       <h1>My E-Commerce</h1>
     </div>
     <nav>
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Login</a></li>
-        <li><a href="/create">Register</a></li>
+          <li><a href="main">Home</a></li>
+          {% if not userData.username %}
+
+          <li><a href="/login">Login</a></li>
+          <li><a href="/create">Register</a></li>
+        {%endif%}
       </ul>
     </nav>
   </header>
@@ -31,7 +33,7 @@
   <!-- Main Content Area: Search bar and product listings placeholder -->
   <main>
     <!-- Search Bar: For future product search functionality (aligns with REQ-6) -->
-    <form method="POST" action="/search/">
+    <form method="POST" action="search/">
       {% csrf_token %}
 
       <section class="search-bar">

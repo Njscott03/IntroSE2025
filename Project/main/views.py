@@ -4,6 +4,8 @@ from .forms import *
 from django.contrib import messages
 from django.db.models import Q
 import random
+
+
 # Create your views here.
 def home(request):
     isLoggedIn = 0
@@ -26,6 +28,12 @@ def create(request):
             email = request.POST.get("email")
             role = request.POST.get("role") #0 = no account 1 = buyer 2 = seller 3 = admin
             balance = request.POST.get("balance")
+            if(role == "Buyer"):
+                role = 1
+            elif(role == "Seller"):
+                role = 2
+            elif(role == "Admin"):
+                role = 3
             newUser = User(username=username, password=password, email=email, role=role, balance=balance)
 
             #Randomize ID until u get one that isnt in database
@@ -36,7 +44,7 @@ def create(request):
                     
                 except User.DoesNotExist:
                     idIsValid = True
-            #Username must e unique
+            #Username must be unique
             if(User.objects.filter(username=username).exists()):
                 messages.add_message(request, messages.SUCCESS, "Username taken")
               
@@ -49,12 +57,37 @@ def create(request):
     return render(request, "createAccount.html", {"form":form})
 
 def search(request, UserID = 0):
+    userData = []
+    try:
+       userData = User.objects.get(userID=UserID)
+    
+    except User.DoesNotExist:
+        pass
     searchTerm = ''
     items = []
     if(request.method == "POST"):
         if(request.POST.get("search")):
             searchTerm = request.POST.get("search")
             items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+
+    return render(request, "search.html", context={"items":items, "userData":userData})
+
+def login(request):
+    if(request.method == 'POST'):
+        form = Login(request.POST)
+
+        form.full_clean()
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        if(User.objects.filter(username = username, email=email, password=password).exists()):
+            user = User.objects.get(username = username, email=email, password=password)
             
-    return render(request, "search.html", {"items":items})
-    
+            return HttpResponseRedirect("/%i/main" % user.userID)
+        else:
+            messages.add_message(request, messages.SUCCESS, "Info invalid")
+
+
+    else:
+        form = Login(request.POST)
+    return render(request, "login.html", {"form":form})
