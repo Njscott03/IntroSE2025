@@ -18,3 +18,4 @@ class Login(forms.Form):
     username = forms.CharField(max_length=50)
     password = forms.CharField(max_length=200, widget=forms.PasswordInput)
     email = forms.EmailField()
+

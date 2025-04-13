@@ -81,10 +81,14 @@ def login(request):
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
-        if(User.objects.filter(username = username, email=email, password=password).exists()):
+        
+        if User.objects.filter(username = username, email=email, password=password).exists():
             user = User.objects.get(username = username, email=email, password=password)
-            
-            return HttpResponseRedirect("/%i/main" % user.userID)
+            if user.role == 0:
+                messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+                user.delete()
+            else:
+                return HttpResponseRedirect("/%i/main" % user.userID)
         else:
             messages.add_message(request, messages.SUCCESS, "Info invalid")
 
@@ -129,10 +133,11 @@ def authUsers(request, UserID=0):
             for user in users.all():
                 if request.POST.get("a" + str(user.userID)) == "approved":
                     user.approved = True
-                    user.save()
-
                 elif request.POST.get("r" + str(user.userID)) == "rejected":
-                    user.delete()
+                    user.role = 0
+                user.save()
+
+                    
         
     return render(request, "auth.html", context={"users":users, "userData":userData})
 
@@ -147,6 +152,39 @@ def authItems(request, UserID=0):
                     item.save()
 
                 elif request.POST.get("r" + str(item.itemID)) == "rejected":
-                    item.delete()
+                    item.price = 0
         
     return render(request, "auth.html", context={"items":items, "userData":userData})
+
+def viewProducts(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    items = Item.objects.filter(seller=userData)
+    for item in items.all():
+        if item.price == 0:
+            messages.add_message(request, messages.SUCCESS, f"{item.name}(ID: {item.itemID}) has been rejected by an admin")
+            item.delete()
+    items = Item.objects.filter(seller=userData)
+     
+    if request.method == "POST":
+        if request.POST.get("save"):
+            for item in items.all():
+                name = request.POST.get("n" + str(item.itemID))
+                description = request.POST.get("d" + str(item.itemID))
+                category = request.POST.get("c" + str(item.itemID))
+                stock = request.POST.get("s" + str(item.itemID))
+                price = request.POST.get("p" + str(item.itemID))
+
+                if name != "":
+                    item.name = name
+                if description != "":
+                    item.description = description
+                if category != "":
+                    item.category = category
+                if int(stock) != 0:
+                    item.stock = stock
+                if int(price) != 0:
+                    item.price = price
+                item.save()
+
+    
+    return render(request, "viewItems.html", context={"items":items, "userData":userData})

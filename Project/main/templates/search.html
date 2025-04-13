@@ -6,7 +6,7 @@
     {% csrf_token %}
 
 <input type="text" id="search-input" placeholder="Search for products..." name="search" value="search">
-<button id="search-btn" type="button">Search</button>
+<button id="search-btn" type="submit">Search</button>
 </form>
 
 {% for item in items %}
