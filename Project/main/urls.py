@@ -8,5 +8,7 @@ urlpatterns = [
     path("search/", views.search, name="search"),
     path("login/", views.login, name="login"),
     path("auth/users", views.authUsers, name="authUsers"),
+    path("auth/items", views.authItems, name="authItems"),
+
     path("sell/makeItem", views.createItem, name="createItem")
 ]

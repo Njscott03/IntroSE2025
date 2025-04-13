@@ -6,8 +6,8 @@
     <ul>
         {%if items%}
             {%for item in items.all%}
-            <li><input type="checkbox" value="approved" name="a{{item.itemID}}"><p>Accept</p><br>
-                <input type="checkbox" value="rejected" name="r{{item.itemID}}"><p>Reject</p><br>
+            <li><input type="checkbox" value="approved" name="a{{item.itemID}}">Accept<br>
+                <input type="checkbox" value="rejected" name="r{{item.itemID}}">Reject<br>
                 <article class="product-card">
                     <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
                     <h5>{{item.name}}</h5>

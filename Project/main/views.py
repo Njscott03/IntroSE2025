@@ -69,7 +69,7 @@ def search(request, UserID = 0):
         if(request.POST.get("search")):
             searchTerm = request.POST.get("search")
             items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
-            items.filter(approved=True)
+            items = items.filter(approved=True)
 
     return render(request, "search.html", context={"items":items, "userData":userData})
 
@@ -115,7 +115,7 @@ def createItem(request, UserID=0):
                 except Item.DoesNotExist:
                     idIsValid = True
             newItem.save()
-            return HttpResponseRedirect("/%i" % userData.userID)
+            return HttpResponseRedirect("/%i/main" % userData.userID)
     else:
         form = CreateNewItem(request.POST)
         
@@ -136,3 +136,17 @@ def authUsers(request, UserID=0):
         
     return render(request, "auth.html", context={"users":users, "userData":userData})
 
+def authItems(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    items = Item.objects.filter(approved=False)
+    if request.method == "POST":
+        if request.POST.get("save"):
+            for item in items.all():
+                if request.POST.get("a" + str(item.itemID)) == "approved":
+                    item.approved = True
+                    item.save()
+
+                elif request.POST.get("r" + str(item.itemID)) == "rejected":
+                    item.delete()
+        
+    return render(request, "auth.html", context={"items":items, "userData":userData})
