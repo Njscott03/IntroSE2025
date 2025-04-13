@@ -69,6 +69,7 @@ def search(request, UserID = 0):
         if(request.POST.get("search")):
             searchTerm = request.POST.get("search")
             items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+            items.filter(approved=True)
 
     return render(request, "search.html", context={"items":items, "userData":userData})
 
@@ -92,6 +93,34 @@ def login(request):
         form = Login(request.POST)
     return render(request, "login.html", {"form":form})
 
+def createItem(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    idIsValid = False
+    if(request.method=="POST"):
+        form = CreateNewItem(request.POST, request.FILES)
+        if(form.is_valid()):
+            form.full_clean()
+
+            name = request.POST.get("name")
+            category = request.POST.get("category")
+            image = request.FILES.get("image")
+            description = request.POST.get("description")
+            price = request.POST.get("price")
+            stock = request.POST.get("stock")
+            newItem = Item(seller=userData, name=name, category=category, description=description, price=price, stock=stock, image=image)
+            while(not idIsValid):
+                newItem.itemID = random.randint(0, 1000000000)
+                try:
+                    Item.objects.get(itemID=newItem.itemID)
+                except Item.DoesNotExist:
+                    idIsValid = True
+            newItem.save()
+            return HttpResponseRedirect("/%i" % userData.userID)
+    else:
+        form = CreateNewItem(request.POST)
+        
+    return render(request, "makeItem.html", context={"form":form, "userData":userData})
+
 def authUsers(request, UserID=0):
     userData = User.objects.get(userID=UserID)
     users = User.objects.filter(approved=False)
@@ -106,3 +135,4 @@ def authUsers(request, UserID=0):
                     user.delete()
         
     return render(request, "auth.html", context={"users":users, "userData":userData})
+

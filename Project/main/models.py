@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 # Create your models here.
 class User(models.Model):
@@ -17,12 +18,12 @@ class Item(models.Model):
     itemID = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='main/static/images', default=0)
+    image = models.ImageField(upload_to='main/static/images', default='p')
     description = models.CharField(max_length=300)
     price = models.FloatField(default=0.0)
     stock = models.IntegerField(default=0)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_added=models.DateField()
+    date_added=models.DateField(default=date.today())
     approved = models.BooleanField(default=False)
     
     def __str__(self):
