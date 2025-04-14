@@ -12,8 +12,10 @@ def home(request):
     return render(request, "index.html", {'isLoggedIn': isLoggedIn})
 
 def mainpage(request, userID):
-    isLoggedIn = 1
     userData = User.objects.get(userID=userID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
     return render(request, "index.html", {"userData": userData})
 
 def create(request):
@@ -57,20 +59,43 @@ def create(request):
     return render(request, "createAccount.html", {"form":form})
 
 def search(request, UserID = 0):
-    userData = []
+    userData = 0
     try:
-       userData = User.objects.get(userID=UserID)
-    
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+            
     except User.DoesNotExist:
         pass
     searchTerm = ''
-    items = []
+    items = Item.objects.filter(approved=True)
     if(request.method == "POST"):
-        if(request.POST.get("search")):
+        if(request.POST.get("searchSubmit")):
             searchTerm = request.POST.get("search")
             items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
             items = items.filter(approved=True)
+        else:    
+            for item in items.all():
+               if(request.POST.get("c" + str(item.itemID)) and UserID != 0):
+                   if(userData.role == 1):
+                        amount = request.POST.get("amount")
+                        if(Cart.objects.filter(buyer=userData, item=item).exists()):
+                            cartItem = Cart.objects.get(buyer=userData, item=item)
+                            cartItem.amount = amount
+                            cartItem.price = float(amount) * float(item.price)
+                            cartItem.save()
+                        else:
+                            newCartItem = Cart(buyer = userData, item=item, amount=amount)
+                            newCartItem.price = float(amount) * float(item.price)
 
+                            newCartItem.save()
+                        
+                   else:
+                        messages.add_message(request, messages.SUCCESS, "Must be buyer")
+
+                
+                    
     return render(request, "search.html", context={"items":items, "userData":userData})
 
 def login(request):
@@ -99,6 +124,9 @@ def login(request):
 
 def createItem(request, UserID=0):
     userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
     idIsValid = False
     if(request.method=="POST"):
         form = CreateNewItem(request.POST, request.FILES)
@@ -158,6 +186,9 @@ def authItems(request, UserID=0):
 
 def viewProducts(request, UserID=0):
     userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
     items = Item.objects.filter(seller=userData)
     for item in items.all():
         if item.price == 0:
@@ -180,11 +211,82 @@ def viewProducts(request, UserID=0):
                     item.description = description
                 if category != "":
                     item.category = category
-                if int(stock) != 0:
+                if stock != '':
                     item.stock = stock
-                if int(price) != 0:
+                if price != '':
                     item.price = price
                 item.save()
+                
 
     
     return render(request, "viewItems.html", context={"items":items, "userData":userData})
+
+def viewCart(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
+
+    idIsValid = False
+    cart = Cart.objects.filter(buyer=userData)
+    
+    if(request.method == "POST"):
+        orderID = 0
+        if(request.POST.get("makeOrder")):
+            order = Order(buyer=userData)
+            while(not idIsValid):
+                orderID = random.randint(0, 1000000000)
+                try:
+                    Order.objects.get(orderID=orderID)
+                except Order.DoesNotExist:
+                    idIsValid = True
+            sum = 0
+            for item in cart:
+                sum += (item.item.price * item.amount)
+                
+            for item in cart:
+                amount = request.POST.get("v" + str(item.id))
+
+                if (userData.balance - sum) < 0:
+                    messages.add_message(request, messages.SUCCESS, "You do not have enough money.")
+
+                else:
+                    if amount == '':
+                        amount = item.amount
+                    seller = User.objects.get(userID = item.item.seller.userID)
+                    order = Order(orderID = orderID, item=item.item, buyer = userData, price=item.item.price, amount=item.amount, totalPrice=sum)
+                    item.item.stock -= int(amount)
+                    seller.balance += sum
+                    userData.balance -= sum
+                    
+                    userData.save()
+                    item.item.save()
+                    seller.save()
+                    order.save()
+                    item.delete()
+                
+        else:
+            for item in cart:
+                amount = request.POST.get("v" + str(item.id))
+                if amount == 0:
+                    item.delete()
+                elif amount == '':
+                    amount = item.amount
+                else:
+                    item.amount = amount
+                    item.price = float(item.amount) * float(item.item.price)
+                    item.save()
+                    
+
+    return render(request, "cart.html", context={"userData":userData, "cart":cart})
+    
+def viewOrders(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
+    order = Order.objects.filter(buyer=userData)
+
+    return render(request, "seeOrders.html", context={"userData":userData, "order":order})
+
+    

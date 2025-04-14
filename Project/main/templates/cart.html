@@ -1,0 +1,34 @@
+{%extends 'base.html'%}
+{%block content%}
+{%block title%}<h1>Cart</h1>{%endblock title%}
+
+    <form method = "POST">
+        {% csrf_token %}
+
+        {%for item in cart%}
+            <ul>
+                <li>Product ID: {{item.item.itemID}}</li>
+                <li>Product Name: {{item.item.name}}</li>
+                <li>Stock: {{item.item.stock}}</li>
+                <li>Amount: {{item.amount}}
+                    <input type="number" name="v{{item.id}}" placeholder="New Amount" min=0 max={{item.item.stock}}>
+                    <button type="submit" name="changeAmount" value="changeAmount">Change Amount</button>
+
+                </li>
+                <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
+            </ul>
+        {%endfor%}
+        <button type="submit" name="makeOrder" value="makeOrder">Make Order</button>
+    </form>
+{%endblock content%}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}

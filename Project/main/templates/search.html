@@ -6,8 +6,11 @@
     {% csrf_token %}
 
 <input type="text" id="search-input" placeholder="Search for products..." name="search" value="search">
-<button id="search-btn" type="submit">Search</button>
+<button id="search-btn" type="submit" name="submitSearch">Search</button>
 </form>
+
+<form method = "POST">
+  {% csrf_token %}
 
 {% for item in items %}
 <section class="product-listings">
@@ -17,10 +20,23 @@
       <h2>{{item.name}}</h2>
       <p>{{item.description}}.</p>
       <p class="price">${{item.price}}</p>
-      <button type="button">Add to Cart</button>
+      <button type="submit" name="c{{item.itemID}}" value="c{{item.itemID}}">Add to Cart</button>
+      <input type="number" id="amount-input" placeholder="Amount" name="amount" value=1 min=1 max={{item.stock}}>
     </article>
     <!-- Additional product cards will be dynamically added here -->
   </section>
 {% endfor %}
+</form>
 
 {% endblock content %}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}

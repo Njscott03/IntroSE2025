@@ -34,15 +34,18 @@ class Item(models.Model):
 class Cart(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    amount = models.IntegerField(default=1)
+    price = models.FloatField()
+
 
 class Order(models.Model):
+    orderID = models.BigIntegerField()
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_bought=models.DateField()
-    status = models.CharField(max_length=50)
-    totalAmount = models.FloatField(default=0.0)
+    seller = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
-
-    
-    
+    date_bought=models.DateField(default=date.today())
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    price = models.FloatField()
+    totalPrice = models.FloatField(default=0.0)
     

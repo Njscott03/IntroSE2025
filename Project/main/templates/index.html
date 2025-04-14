@@ -27,7 +27,6 @@
       </section>
     </form>
 
-
     <!-- Product Listings: Placeholder section for dynamically rendered product cards -->
     <section class="product-listings">
       <!-- Example Product Card -->
@@ -51,3 +50,14 @@
   <script src="js/script.js"></script>
 </body>
 {% endblock content %}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}

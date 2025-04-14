@@ -32,4 +32,16 @@
     </form>
 {%endif%}
 
+
 {%endblock content%}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}
