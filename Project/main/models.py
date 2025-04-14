@@ -41,8 +41,6 @@ class Cart(models.Model):
 class Order(models.Model):
     orderID = models.BigIntegerField()
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
-
     date_bought=models.DateField(default=date.today())
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     amount = models.IntegerField()
