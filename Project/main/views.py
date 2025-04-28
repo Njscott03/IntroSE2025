@@ -4,19 +4,22 @@ from .forms import *
 from django.contrib import messages
 from django.db.models import Q
 import random
-
+from .models import Item
 
 # Create your views here.
 def home(request):
-    isLoggedIn = 0
-    return render(request, "index.html", {'isLoggedIn': isLoggedIn})
+    # show first 20 approved products alphabetically on homepage
+    items = Item.objects.filter(approved=True).order_by('name')[:20]
+    return render(request, "index.html", {'items': items})
 
 def mainpage(request, userID):
     userData = User.objects.get(userID=userID)
+    # show first 20 approved products on user mainpage
+    items = Item.objects.filter(approved=True).order_by('name')[:20]
     if(userData.role == 0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
         userData.delete()
-    return render(request, "index.html", {"userData": userData})
+    return render(request, "index.html", {"userData": userData, "items": items})
 
 def create(request):
     idIsValid = False
@@ -289,4 +292,23 @@ def viewOrders(request, UserID=0):
 
     return render(request, "seeOrders.html", context={"userData":userData, "order":order})
 
-    
+def add_to_cart(request, userID, itemID):
+    userData = User.objects.get(userID=userID)
+    if userData.role != 1:
+        messages.add_message(request, messages.SUCCESS, "Must be buyer to add to cart")
+        return HttpResponseRedirect(f"/{userID}/main")
+    if request.method == "POST":
+        item = Item.objects.get(itemID=itemID)
+        amount = int(request.POST.get("amount", 1))
+        price_val = float(amount) * float(item.price)
+        cartItem, created = Cart.objects.get_or_create(
+            buyer=userData,
+            item=item,
+            defaults={'amount': amount, 'price': price_val}
+        )
+        if not created:
+            cartItem.amount = amount
+            cartItem.price = price_val
+            cartItem.save()
+        messages.add_message(request, messages.SUCCESS, f"{item.name} added to cart")
+    return HttpResponseRedirect(f"/{userID}/main")

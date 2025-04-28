@@ -1,5 +1,6 @@
 
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 
 
@@ -10,7 +11,7 @@
   <!-- Link to external CSS file where global fonts are set:
        - Body: 11pt Arial
        - Headers: Bold 14pt New Roman -->
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
   <!-- Header Section: Contains the logo and navigation bar -->
@@ -27,18 +28,44 @@
       </section>
     </form>
 
-    <!-- Product Listings: Placeholder section for dynamically rendered product cards -->
+    <!-- Product Listings: Display first 20 approved products alphabetically -->
+    {% if userData and userData.role == 1 %}
+    <!-- Buyer view: product list with Add to Cart button -->
     <section class="product-listings">
-      <!-- Example Product Card -->
-      <article class="product-card">
-        <img src="product-placeholder.png" alt="Product Image">
-        <h2>Product Title</h2>
-        <p>Short description of the product goes here.</p>
-        <p class="price">$XX.XX</p>
-        <button type="button">Add to Cart</button>
-      </article>
-      <!-- Additional product cards will be dynamically added here -->
+      {% if items %}
+        {% for item in items %}
+        <article class="product-card">
+            <img src="{{ item.image.url|slice:'5:' }}" alt="{{ item.name }}" height="150" />
+            <h2>{{ item.name }}</h2>
+            <form method="POST" action="/{% if userData %}{{ userData.userID }}{% endif %}/add_to_cart/{{ item.itemID }}/">
+              {% csrf_token %}
+              <input type="hidden" name="c{{ item.itemID }}" value="1" />
+              <input type="number" name="amount" min="1" value="1" style="width:50px;" />
+              <button type="submit">Add to Cart</button>
+            </form>
+            <p class="price">${{ item.price }}</p>
+        </article>
+        {% endfor %}
+      {% else %}
+        <p>No products to display yet.</p>
+      {% endif %}
     </section>
+    {% else %}
+    <!-- Guest view: same as before -->
+    <section class="product-listings">
+      {% if items %}
+        {% for item in items %}
+        <article class="product-card">
+            <img src="{{ item.image.url|slice:'5:' }}" alt="{{ item.name }}" height="150" />
+            <h2>{{ item.name }}</h2>
+            <p class="price">${{ item.price }}</p>
+        </article>
+        {% endfor %}
+      {% else %}
+        <p>No products to display yet.</p>
+      {% endif %}
+    </section>
+    {% endif %}
   </main>
 
   <!-- Footer Section: Contains footer details -->
