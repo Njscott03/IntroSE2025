@@ -292,7 +292,7 @@ def viewOrders(request, UserID=0):
 
     return render(request, "seeOrders.html", context={"userData":userData, "order":order})
 
-def add_to_cart(request, userID, itemID):
+def add_to_cart(request, userID=0, itemID=0):
     userData = User.objects.get(userID=userID)
     if userData.role != 1:
         messages.add_message(request, messages.SUCCESS, "Must be buyer to add to cart")
@@ -313,7 +313,7 @@ def add_to_cart(request, userID, itemID):
         messages.add_message(request, messages.SUCCESS, f"{item.name} added to cart")
     return HttpResponseRedirect(f"/{userID}/main")
 
-def editAccount(request, UserID):
+def editAccount(request, UserID=0):
     userData = User.objects.get(userID=UserID)
     if(userData.role == 0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
@@ -345,4 +345,22 @@ def editAccount(request, UserID):
         form = EditAccount(request.POST)
     
     return render(request, "editAccount.html", context = {"userData":userData, "form":form})
+
+def sellerViewOrders(request, UserID=0):
+    userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
     
+    itemSet = Item.objects.filter(seller=userData)
+    order = [itemSet.count()]
+
+    for item in itemSet.all():
+        if(Order.objects.filter(item=item).exists()):
+            set = Order.objects.filter(item=item)
+            for orderItem in set:
+                order.append(orderItem)
+    
+
+
+    return render(request, "seeOrders.html", context={"userData":userData, "order":order})
