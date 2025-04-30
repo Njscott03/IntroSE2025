@@ -328,18 +328,22 @@ def editAccount(request, UserID=0):
             email = request.POST.get("email")
             add_money = request.POST.get("add_money")
 
+            oldUsername = userData.username
             if username != "":
                 userData.username = username
-                print(userData.username)
             if password != "":
                 userData.password = password
             if email != "":
                 userData.email = email
             if add_money != "":
-                userData.balance += add_money
-            userData.save()
+                userData.balance += float(add_money)
 
-            return HttpResponseRedirect("/%i/main" % userData.userID)
+            if(User.objects.filter(username=username).exists() and username != oldUsername):
+                messages.add_message(request, messages.SUCCESS, "Username taken")
+                userData.username = oldUsername
+            else:
+                userData.save()
+                return HttpResponseRedirect("/%i/main" % userData.userID)
 
     else:
         form = EditAccount(request.POST)
