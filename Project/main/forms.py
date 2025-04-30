@@ -19,3 +19,8 @@ class Login(forms.Form):
     password = forms.CharField(max_length=200, widget=forms.PasswordInput)
     email = forms.EmailField()
 
+class EditAccount(forms.Form):
+    username = forms.CharField(max_length=50, required=False)
+    password = forms.CharField(max_length=200, widget=forms.PasswordInput, required=False)
+    email = forms.EmailField(required=False)
+    add_money = forms.FloatField(required=False)

@@ -31,7 +31,7 @@ def create(request):
             
             password = request.POST.get("password")
             email = request.POST.get("email")
-            role = request.POST.get("role") #0 = no account 1 = buyer 2 = seller 3 = admin
+            role = request.POST.get("role") #1 = buyer 2 = seller 3 = admin
             balance = request.POST.get("balance")
             if(role == "Buyer"):
                 role = 1
@@ -312,3 +312,37 @@ def add_to_cart(request, userID, itemID):
             cartItem.save()
         messages.add_message(request, messages.SUCCESS, f"{item.name} added to cart")
     return HttpResponseRedirect(f"/{userID}/main")
+
+def editAccount(request, UserID):
+    userData = User.objects.get(userID=UserID)
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
+    if request.method == "POST":
+        form = EditAccount(request.POST)
+
+        if form.is_valid():
+            form.full_clean()
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            email = request.POST.get("email")
+            add_money = request.POST.get("add_money")
+
+            if username != "":
+                userData.username = username
+                print(userData.username)
+            if password != "":
+                userData.password = password
+            if email != "":
+                userData.email = email
+            if add_money != "":
+                userData.balance += add_money
+            userData.save()
+
+            return HttpResponseRedirect("/%i/main" % userData.userID)
+
+    else:
+        form = EditAccount(request.POST)
+    
+    return render(request, "editAccount.html", context = {"userData":userData, "form":form})
+    

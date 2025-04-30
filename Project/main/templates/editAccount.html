@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content%}
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <ul>
+        <li>
+            <label for="{{ form.username.id_for_label }}">New Username: </label>
+            {{form.username}}
+        </li>
+    <br>
+        <li>
+            <label>New Email: </label>
+            {{form.email}}
+        </li>
+    <br>
+        <li>
+            <label>New Password: </label>
+            {{form.password}}     
+        </li>
+    <br>
+        <li>
+            <label>Add to Balance of ${{userData.balance}}: </label>
+            {{form.add_money}}
+        </li>
+    </ul>
+
+    <br><button type="submit", name="save">Submit</button>
+
+</form>
+
+{%endblock content%}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3 style="color: red">{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}

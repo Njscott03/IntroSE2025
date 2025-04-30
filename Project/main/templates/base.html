@@ -16,7 +16,6 @@
               <li><a href="/create">Register</a></li>
             {%elif not userData.approved%}
                 <li><a href="/">Home</a></li>
-
                 <h1 style="color:red">
                     {{userData.username}} has not been approved.<br>
                      Please wait until an admin approves your account</h1>
@@ -26,6 +25,8 @@
                 <li><p>Balance: ${{userData.balance}}</p></li>
 
               <li><a href="/{{userData.userID}}/main">Home</a></li>
+              <li><a href="/{{userData.userID}}/edit">Edit Account</a></li>
+
                 {%if userData.role == 3%}
                     <li><a href="/{{userData.userID}}/auth/users">Authenticate users</a></li>
                     <li><a href="/{{userData.userID}}/auth/items">Authenticate items</a></li>

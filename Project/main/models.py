@@ -47,3 +47,4 @@ class Order(models.Model):
     price = models.FloatField()
     totalPrice = models.FloatField(default=0.0)
     
+    
