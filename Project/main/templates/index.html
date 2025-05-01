@@ -18,17 +18,7 @@
 
   <!-- Main Content Area: Search bar and product listings placeholder -->
   <main>
-    <!-- Search Bar: For future product search functionality (aligns with REQ-6) -->
-    <form method="POST" action="search/">
-      {% csrf_token %}
-
-      <section class="search-bar">
-        <input type="text" id="search-input" placeholder="Search for products..." name="search" value="search">
-        <button id="search-btn" type="submit">Search</button>
-      </section>
-    </form>
-
-    <!-- Product Listings: Display first 20 approved products alphabetically -->
+    <!-- Search bar moved to topbar -->
     {% if userData and userData.role == 1 %}
     <!-- Buyer view: product list with Add to Cart button -->
     <section class="product-listings">

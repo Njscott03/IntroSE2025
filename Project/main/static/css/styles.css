@@ -1,3 +1,10 @@
+/* Reset default browser spacing */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
 /* Product listings layout */
 .product-listings {
   display: flex;
@@ -5,6 +12,8 @@
   gap: 20px;
   padding: 0;
   margin: 0;
+  border-top: 20px solid #f5f5f5;
+  border-left: 20px solid #f5f5f5;
 }
 
 /* Each product card styling */
@@ -32,4 +41,212 @@
   border-radius: 4px;
   padding: 2px;
   margin-bottom: 12px;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #232F3E;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 9px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  justify-content: center;
+}
+
+.navbar .logo h1 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.navbar-menu {
+  margin: 0 auto;
+  min-width: 25%;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  margin: 0;
+}
+
+.nav-list li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.nav-list li a:hover {
+  text-decoration: underline;
+}
+
+/* Topbar styling */
+.topbar {
+  background-color: #1A202C;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  width: 100%;
+  position: relative;
+}
+
+.topbar-left .site-title {
+  margin: 0;
+  font-size: 1.4em;
+  color: #fff;
+  padding-left: 20px;
+}
+
+.topbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.topbar-center form {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.topbar-search {
+  width: 300px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.topbar-center button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #4A5568;
+  color: #fff;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.topbar-center button:hover {
+  background-color: #2D3748;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-link {
+  margin: 0;
+  text-align: right;
+  font-size: 1em;
+  font-family: inherit;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: normal;
+}
+
+.user-link span {
+  display: block;
+}
+
+.balance {
+  font-size: 1em;
+  font-family: inherit;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+  padding-right: 20px;
+}
+
+/* Ensure user-link is always white and without underline */
+.user-link,
+.user-link:link,
+.user-link:visited,
+.user-link:hover,
+.user-link:active {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+/* Style for Add New Product form container */
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.form-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-container button {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #232F3E;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #1a2330;
+}
+
+/* Style for form fields in form-container */
+.form-container .form-field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Red asterisk for required fields */
+.required-star {
+  color: #e53935;
+  margin-left: 4px;
+}
+
+/* Note for required fields */
+.required-note {
+  color: #e53935;
+  font-size: 0.9em;
+  margin-top: 8px;
+  text-align: left;
+}
+
+/* Full-width inputs for makeItem form */
+.form-container .form-field input,
+.form-container .form-field textarea,
+.form-container .form-field select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }

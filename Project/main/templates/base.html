@@ -1,15 +1,32 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-<header>
+<header class="topbar">
+  <div class="topbar-left">
+    <h1 class="site-title">My E-Commerce</h1>
+  </div>
+  <div class="topbar-center">
+    <form method="POST" action="/search/">
+      {% csrf_token %}
+      <input type="text" name="search" placeholder="Search for products..." class="topbar-search"/>
+      <button type="submit">Search</button>
+    </form>
+  </div>
+  <div class="topbar-right">
+    {% if userData.userID and userData.approved %}
+      <a href="/{{userData.userID}}/edit" class="user-link">
+        <span>Hello {{userData.username}}</span><br/>
+        <span>Edit Account</span>
+      </a>
+      <span class="balance">Balance: ${{userData.balance}}</span>
+    {% endif %}
+  </div>
+</header>
+<header class="navbar">
     <div class="logo">
       <!-- Using header styling as per SRS (14pt bold New Roman) -->
-      {% if userData.username %}
-      <h1>You are logged in as {{userData.username}}</h1>
-      {% endif %}
-      <h1>My E-Commerce</h1>
     </div>
-    <nav>
-        <ul>
+    <nav class="navbar-menu">
+        <ul class="nav-list">
             {%if not userData.userID%}
               <li><a href="/">Home</a></li>
               <li><a href="/login">Login</a></li>
@@ -22,13 +39,9 @@
                 {%block notApproved%}
                 {%endblock notApproved%}
             {%else%}
-                <li><p>Balance: ${{userData.balance}}</p></li>
-
               <li><a href="/{{userData.userID}}/main">Home</a></li>
-              <li><a href="/{{userData.userID}}/edit">Edit Account</a></li>
               <li><a href="/">Log Out</a></li>
 
-                <br>
                 {%if userData.role == 3%}
                     <li><a href="/{{userData.userID}}/auth/users">Authenticate users</a></li>
                     <li><a href="/{{userData.userID}}/auth/items">Authenticate items</a></li>
