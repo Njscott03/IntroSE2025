@@ -26,7 +26,9 @@
 
               <li><a href="/{{userData.userID}}/main">Home</a></li>
               <li><a href="/{{userData.userID}}/edit">Edit Account</a></li>
+              <li><a href="/">Log Out</a></li>
 
+                <br>
                 {%if userData.role == 3%}
                     <li><a href="/{{userData.userID}}/auth/users">Authenticate users</a></li>
                     <li><a href="/{{userData.userID}}/auth/items">Authenticate items</a></li>
