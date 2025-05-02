@@ -336,6 +336,8 @@ def viewCart(request, UserID=0):
                     seller.save()
                     order.save()
                     item.delete()
+            return HttpResponseRedirect("/%i/buy/cart" % userData.userID)
+
                 
         else:
             for item in cart:
@@ -345,11 +347,13 @@ def viewCart(request, UserID=0):
                     pass
                 elif int(amount) == 0:
                     item.delete()
+                    
                 else:
                     print(amount)
                     item.amount = amount
                     item.price = round(float(item.amount) * float(item.item.price), 2)
                     item.save()
+            return HttpResponseRedirect("")
                     
 
     return render(request, "cart.html", context={"userData":userData, "cart":cart})
@@ -536,4 +540,28 @@ def monitorUsers(request, UserID=0):
     return render(request, "adminMonitor.html", context={"userData":userData, "users":users})
 
 def adminViewOrders(request, UserID=0):
-    pass
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+        
+    orderIDs = []
+    if(userData.role == 0):
+        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+        userData.delete()
+
+    orderItems = Order.objects.all()
+    orders = []
+    for item in orderItems.all():
+        if(not item.orderID in orderIDs):
+            orderIDs.append(item.orderID)
+            orders.append(orderItems.filter(orderID=item.orderID))
+    
+
+    return render(request, "seeOrders.html", context={"userData":userData, "orders":orders})
