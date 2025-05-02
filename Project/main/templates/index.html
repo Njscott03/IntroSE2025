@@ -19,7 +19,7 @@
   <!-- Main Content Area: Search bar and product listings placeholder -->
   <main>
     <!-- Search bar moved to topbar -->
-    {% if userData and userData.role == 1 %}
+    {% if userData.role == 1 %}
     <!-- Buyer view: product list with Add to Cart button -->
     <section class="product-listings">
       {% if items %}

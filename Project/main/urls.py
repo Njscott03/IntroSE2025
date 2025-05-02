@@ -15,6 +15,9 @@ urlpatterns = [
     path("sell/orders", views.sellerViewOrders, name="sellOrders"),
     path("buy/cart", views.viewCart, name="viewCart"),
     path("buy/orders", views.viewOrders, name="viewOrders"),
-    path("<int:userID>/add_to_cart/<int:itemID>/", views.add_to_cart, name="add_to_cart"),
-    path("<int:UserID>/edit", views.editAccount, name="edit")
+    path("<int:UserID>/add_to_cart/<int:itemID>/", views.add_to_cart, name="add_to_cart"),
+    path("<int:UserID>/edit", views.editAccount, name="edit"),
+    path("auth/monitorItems", views.monitorItems, name="monItems"),
+    path("auth/monitorUsers", views.monitorUsers, name="monUsers"),
+    path("auth/orders", views.adminViewOrders, name="adminOrders")
 ]

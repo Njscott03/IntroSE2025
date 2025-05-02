@@ -1,0 +1,106 @@
+{%extends 'base.html'%}
+
+{%block content%}
+    {%if userData.role == 3%}
+    {%if sellers%}
+        <form method="POST" action="">
+            {% csrf_token %}
+            {%for items in sellers%}
+            <br>
+                <table summary="Items">
+                    <caption>Seller Name: {{items.first.seller}}&emsp;
+                        &emsp;Seller ID:{{items.first.seller.userID}}</caption>
+                    <colgroup>
+                        <col span="2" style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+                        <col style="background-color:cyan">
+
+                        </colgroup>
+                    <th>Product ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Date Added</th>
+                    <th>Image</th>
+                    <th>Remove</th>
+                    {%for item in items.all%}
+                        <tr>
+                            <td>{{item.itemID}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.description}}</td>
+                            <td>{{item.category}}</td>
+                            <td>{{item.stock}}</td>
+                            <td>${{item.price}}</td>
+                            <td>{{item.date_added}}</td>
+                            <td><img src="{{item.image.url | slice:"5:"}}" alt="Product Image" height = 50></td>
+                            <td><input type="checkbox" value="remove" name="r{{item.itemID}}">Remove Item</td>
+                        </tr>
+                    {%endfor%}
+                </table>
+                <br>
+
+            {%endfor%}
+            
+            <button type="submit", name="save", value="save">Submit</button>
+    </form>
+
+    {%elif users%}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <table summary="Users">
+                <caption>Users</caption>
+                <colgroup>
+                    <col span="2" style="background-color:cyan">
+                    <col style="background-color:cyan">
+                    <col style="background-color:cyan">
+                    <col style="background-color:cyan">
+                    <col style="background-color:cyan">
+                    <col style="background-color:cyan">
+
+                </colgroup>
+
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Role</th>
+                <th>Remove</th>
+
+                {%for user in users%}
+                    <tr>
+                        <td>{{user.userID}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.email}}</td>
+                        <td>${{user.balance}}</td>
+                        <td>
+                            {%if user.role == 1%}
+                                Buyer
+                            {%elif user.role == 2%}
+                                Seller
+                            {%elif user.role == 3%}
+                                Admin
+                            {%else%}
+                                Rejected Account
+                            {%endif%}
+                        </td>
+                        <td>
+                            {%if user.role != 3%}
+                                <input type="checkbox" value="remove" name="r{{user.userID}}">Remove Account
+                            {%endif%}
+                        </td>
+                    </tr>
+                {%endfor%}
+            </table>
+            </form>
+
+    {%endif%}
+    {%endif%}
+
+{%endblock content%}

@@ -2,7 +2,7 @@
 {% block content%}
 
 
-<form method = "POST" action="{{searchTerm}}">
+<form method = "POST" action="">
   {% csrf_token %}
   {% for item in items %}
   <section class="product-listings">

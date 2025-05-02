@@ -12,13 +12,20 @@ def home(request):
     items = Item.objects.filter(approved=True).order_by('name')[:20]
     return render(request, "index.html", {'items': items})
 
-def mainpage(request, userID):
-    userData = User.objects.get(userID=userID)
-    # show first 20 approved products on user mainpage
+def mainpage(request, userID=0):
+    userData = 0
+    try:
+        userData = User.objects.get(userID=userID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":userID, "items":items})
+
     items = Item.objects.filter(approved=True).order_by('name')[:20]
-    if(userData.role == 0):
-        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
-        userData.delete()
+
     return render(request, "index.html", {"userData": userData, "items": items})
 
 def create(request):
@@ -63,25 +70,30 @@ def create(request):
 
 def search(request, UserID = 0, searchTerm = ''):
     userData = 0
-    try:
-        userData = User.objects.get(userID=UserID)
-        if(userData.role == 0):
-            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
-            userData.delete()
-    except User.DoesNotExist:
-        pass
+    if(UserID != 0):
+        try:
+            userData = User.objects.get(userID=UserID)
+            if(userData.role == 0):
+                messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+                userData.delete()
+        except User.DoesNotExist:
+            userData = 0
+            items = Item.objects.filter(approved=True).order_by('name')[:20]
+            return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+
     items = Item.objects.filter(approved=True)
-    items = items.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+    items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
 
     if(request.method == "POST"):
         if(request.POST.get("searchSubmit")):
             searchTerm = request.POST.get("search")
-            items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
-            items = items.filter(approved=True)
+            if(searchTerm != ''):
+                items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+                items = items.filter(approved=True)
             if(UserID == 0):
-                return HttpResponseRedirect(f"/search/{searchTerm}")
+                return HttpResponseRedirect("/search/%s" % (searchTerm))
             else:
-                return HttpResponseRedirect(f"/{userData.userID}/search/{searchTerm}")
+                return HttpResponseRedirect("/%i/search/%s" % (userData.userID,searchTerm))
 
         else:
             for item in items.all():
@@ -92,11 +104,11 @@ def search(request, UserID = 0, searchTerm = ''):
                         if(Cart.objects.filter(buyer=userData, item=item).exists()):
                             cartItem = Cart.objects.get(buyer=userData, item=item)
                             cartItem.amount = amount
-                            cartItem.price = float(amount) * float(item.price)
+                            cartItem.price = round(float(amount) * float(item.price), 2)
                             cartItem.save()
                         else:
                             newCartItem = Cart(buyer = userData, item=item, amount=amount)
-                            newCartItem.price = float(amount) * float(item.price)
+                            newCartItem.price = round(float(amount) * float(item.price), 2)
 
                             newCartItem.save()
                         messages.add_message(request, messages.SUCCESS, f"{item} added to cart")
@@ -134,10 +146,17 @@ def login(request):
     return render(request, "login.html", {"form":form})
 
 def createItem(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
-    if(userData.role == 0):
-        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
-        userData.delete()
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+    
     idIsValid = False
     if(request.method=="POST"):
         form = CreateNewItem(request.POST, request.FILES)
@@ -150,7 +169,7 @@ def createItem(request, UserID=0):
             description = request.POST.get("description")
             price = request.POST.get("price")
             stock = request.POST.get("stock")
-            newItem = Item(seller=userData, name=name, category=category, description=description, price=price, stock=stock, image=image)
+            newItem = Item(seller=userData, name=name, category=category, description=description, price=round(price, 2), stock=stock, image=image)
             while(not idIsValid):
                 newItem.itemID = random.randint(0, 1000000000)
                 try:
@@ -165,7 +184,17 @@ def createItem(request, UserID=0):
     return render(request, "makeItem.html", context={"form":form, "userData":userData})
 
 def authUsers(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+    
     users = User.objects.filter(approved=False)
     if request.method == "POST":
         if request.POST.get("save"):
@@ -178,10 +207,20 @@ def authUsers(request, UserID=0):
 
                     
         
-    return render(request, "auth.html", context={"users":users, "userData":userData})
+    return render(request, "adminAuth.html", context={"users":users, "userData":userData})
 
 def authItems(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+        
     items = Item.objects.filter(approved=False)
     if request.method == "POST":
         if request.POST.get("save"):
@@ -193,10 +232,20 @@ def authItems(request, UserID=0):
                 elif request.POST.get("r" + str(item.itemID)) == "rejected":
                     item.price = 0
         
-    return render(request, "auth.html", context={"items":items, "userData":userData})
+    return render(request, "adminAuth.html", context={"items":items, "userData":userData})
 
 def viewProducts(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+
+
     if(userData.role == 0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
         userData.delete()
@@ -225,7 +274,7 @@ def viewProducts(request, UserID=0):
                 if stock != '':
                     item.stock = stock
                 if price != '':
-                    item.price = price
+                    item.price = round(price, 2)
                 item.save()
                 
 
@@ -233,10 +282,17 @@ def viewProducts(request, UserID=0):
     return render(request, "viewItems.html", context={"items":items, "userData":userData})
 
 def viewCart(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
-    if(userData.role == 0):
-        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
-        userData.delete()
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+    
 
     idIsValid = False
     cart = Cart.objects.filter(buyer=userData)
@@ -254,7 +310,7 @@ def viewCart(request, UserID=0):
                     idIsValid = True
             sum = 0
             for item in cart:
-                sum += (item.item.price * item.amount)
+                sum += round(item.item.price * item.amount, 2)
                 
             for item in cart:
                 amount = request.POST.get("v" + str(item.id))
@@ -266,11 +322,15 @@ def viewCart(request, UserID=0):
                     if amount == '':
                         amount = item.amount
                     seller = User.objects.get(userID = item.item.seller.userID)
-                    order = Order(orderID = orderID, item=item.item, buyer = userData, price=item.item.price, amount=item.amount, totalPrice=sum)
+                    order = Order(orderID = orderID, item=item.item, buyer = userData,
+                                   price=round(item.price, 2), amount=item.amount, totalPrice=round(sum, 2))
                     item.item.stock -= int(amount)
                     seller.balance += sum
                     userData.balance -= sum
                     
+                    seller.balance = round(seller.balance, 2)
+                    userData.balance = round(userData.balance, 2)
+
                     userData.save()
                     item.item.save()
                     seller.save()
@@ -288,14 +348,24 @@ def viewCart(request, UserID=0):
                 else:
                     print(amount)
                     item.amount = amount
-                    item.price = float(item.amount) * float(item.item.price)
+                    item.price = round(float(item.amount) * float(item.item.price), 2)
                     item.save()
                     
 
     return render(request, "cart.html", context={"userData":userData, "cart":cart})
     
 def viewOrders(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+        
     orderIDs = []
     if(userData.role == 0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
@@ -311,15 +381,25 @@ def viewOrders(request, UserID=0):
 
     return render(request, "seeOrders.html", context={"userData":userData, "orders":orders})
 
-def add_to_cart(request, userID=0, itemID=0):
-    userData = User.objects.get(userID=userID)
+def add_to_cart(request, UserID=0, itemID=0):
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+
     if userData.role != 1:
         messages.add_message(request, messages.SUCCESS, "Must be buyer to add to cart")
-        return HttpResponseRedirect(f"/{userID}/main")
+        return HttpResponseRedirect(f"/{UserID}/main")
     if request.method == "POST":
         item = Item.objects.get(itemID=itemID)
         amount = int(request.POST.get("amount", 1))
-        price_val = float(amount) * float(item.price)
+        price_val = round(float(amount) * float(item.price), 2)
         cartItem, created = Cart.objects.get_or_create(
             buyer=userData,
             item=item,
@@ -327,13 +407,23 @@ def add_to_cart(request, userID=0, itemID=0):
         )
         if not created:
             cartItem.amount = amount
-            cartItem.price = price_val
+            cartItem.price = round(price_val, 2)
             cartItem.save()
         messages.add_message(request, messages.SUCCESS, f"{item.name} added to cart")
-    return HttpResponseRedirect(f"/{userID}/main")
+    return HttpResponseRedirect(f"/{UserID}/main")
 
 def editAccount(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+
     if(userData.role == 0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
         userData.delete()
@@ -355,7 +445,7 @@ def editAccount(request, UserID=0):
             if email != "":
                 userData.email = email
             if add_money != "":
-                userData.balance += float(add_money)
+                userData.balance += round(float(add_money), 2)
 
             if(User.objects.filter(username=username).exists() and username != oldUsername):
                 messages.add_message(request, messages.SUCCESS, "Username taken")
@@ -370,10 +460,16 @@ def editAccount(request, UserID=0):
     return render(request, "editAccount.html", context = {"userData":userData, "form":form})
 
 def sellerViewOrders(request, UserID=0):
-    userData = User.objects.get(userID=UserID)
-    if(userData.role == 0):
-        messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
-        userData.delete()
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     itemSet = Item.objects.filter(seller=userData)
     order = [itemSet.count()]
@@ -387,3 +483,57 @@ def sellerViewOrders(request, UserID=0):
 
 
     return render(request, "seeOrders.html", context={"userData":userData, "order":order})
+
+def monitorItems(request, UserID=0):
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+
+    sellers = []
+    sellerItems = Item.objects.filter(approved=True)
+
+    for item in sellerItems.all():
+        if(not item.seller in sellers):
+            sellers.append(sellerItems.filter(seller=item.seller))
+    
+    if request.method == "POST":
+        if request.POST.get("save"):
+            for item in sellerItems.all():
+                if request.POST.get("r" + str(item.itemID)) == "remove":
+
+
+                    item.price = 0
+                print(item.name)
+
+    return render(request, "adminMonitor.html", context={"userData":userData, "sellers":sellers})
+
+def monitorUsers(request, UserID=0):
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+    
+    users = User.objects.filter(approved=True)
+
+    if request.method == "POST":
+        for user in users:
+            if(request.POST.get("r" + str(user.userID)) == "remove"):
+                user.role = 0
+    
+    return render(request, "adminMonitor.html", context={"userData":userData, "users":users})
+
+def adminViewOrders(request, UserID=0):
+    pass
