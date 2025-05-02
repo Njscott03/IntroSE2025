@@ -565,3 +565,20 @@ def adminViewOrders(request, UserID=0):
     
 
     return render(request, "seeOrders.html", context={"userData":userData, "orders":orders})
+
+def deleteAccount(request, UserID = 0):
+    userData = 0
+    try:
+        userData = User.objects.get(userID=UserID)
+        if(userData.role == 0):
+            messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
+            userData.delete()
+    except User.DoesNotExist:
+        userData = 0
+        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
+    
+    if(request.method == "POST"):
+        userData.delete()
+        return HttpResponseRedirect("/")
+    return render(request, "deleteAccount.html", context={"userData":userData})

@@ -19,5 +19,6 @@ urlpatterns = [
     path("<int:UserID>/edit", views.editAccount, name="edit"),
     path("auth/monitorItems", views.monitorItems, name="monItems"),
     path("auth/monitorUsers", views.monitorUsers, name="monUsers"),
-    path("auth/orders", views.adminViewOrders, name="adminOrders")
+    path("auth/orders", views.adminViewOrders, name="adminOrders"),
+    path("<int:UserID>/edit/delete", views.deleteAccount, name="delete")
 ]

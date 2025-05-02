@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content%}
+<form methd = "POST" action="edit/delete">
+    {% csrf_token %}
 
+    <button type="submit">Delete Account</button>
+
+</form>
 <form method="POST" action="">
     {% csrf_token %}
     <ul>
@@ -25,7 +30,7 @@
         </li>
     </ul>
 
-    <br><button type="submit", name="save">Submit</button>
+    <br><button type="submit", name="save", value="save">Submit</button>
 
 </form>
 
