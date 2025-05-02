@@ -5,10 +5,10 @@
     <h1 class="site-title">My E-Commerce</h1>
   </div>
   <div class="topbar-center">
-    <form method="POST" action="/search/">
+    <form method="POST" action="/{%if userData.userID and userData.approved%}{{userData.userID}}/{% endif %}search/">
       {% csrf_token %}
       <input type="text" name="search" placeholder="Search for products..." class="topbar-search"/>
-      <button type="submit">Search</button>
+      <button type="submit" name = "searchSubmit" value = "searchSubmit">Search</button>
     </form>
   </div>
   <div class="topbar-right">
@@ -63,5 +63,6 @@
   {%endblock content%}
 
   {%block msg%}
+
   {%endblock msg%}
 {%endif%}

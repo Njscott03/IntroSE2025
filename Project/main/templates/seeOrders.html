@@ -1,18 +1,23 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {%block content%}
     {%if userData.role == 1%}
-        <h3>Order ID: {{order.first.orderID}}</h3>
-        {%for item in order.all%}
-            <ul>
-                <li>Product ID: {{item.item.itemID}}</li>
-                <li>Product Name: {{item.item.name}}</li>
-                <li>Stock: {{item.item.stock}}</li>
-                <li>Amount: {{item.amount}}</li>
-                <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
-            </ul>
-        {%endfor%}
-        <h3>Total: {{order.first.totalPrice}}</h3>
+
+        {%for order in orders%}
+            <h3>Order ID: {{order.first.orderID}}</h3>
+            {%for item in order%}
+                <ul>
+                    <li>Product ID: {{item.item.itemID}}</li>
+                    <li>Product Name: {{item.item.name}}</li>
+                    <li>Stock: {{item.item.stock}}</li>
+                    <li>Amount: {{item.amount}}</li>
+                    <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
+                </ul>
+            {%endfor%}
+            <h3>total: ${{order.first.totalPrice}}</h3>
+          {%endfor%}
+
+
     {%elif userData.role == 2%}
         {%for item in order%}
             <h3>Bought by {{item.buyer.username}} on {{item.date_bought}}<br></h3>
@@ -26,7 +31,9 @@
                 <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
             </ul>
         {%endfor%}
+
     {%endif%}
+
 
 {%endblock content%}
 
