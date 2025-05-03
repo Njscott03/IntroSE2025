@@ -4,31 +4,65 @@
         
     <form method="POST" action="">
         {% csrf_token %}
+    <table class="order-table">
 
-    <ul>
-        {%if items%}
-            {%for item in items.all%}
-            <li><input type="checkbox" value="approved" name="a{{item.itemID}}">Accept<br>
-                <input type="checkbox" value="rejected" name="r{{item.itemID}}">Reject<br>
-                <article class="product-card">
-                    <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
-                    <h5>{{item.name}}</h5>
-                    <p>{{item.description}}.</p>
-                    <p class="price">${{item.price}}</p>
-                  </article>
-            </li>
-            {%endfor%}
-        {%else%}
-            {%for user in users.all%}
-            <li>
-                <h4>Name: {{user.username}}&emsp;Email: {{user.email}}</h4>
-                <input type="checkbox" value="approved" name="a{{user.userID}}">Accept<br>
-                <input type="checkbox" value="rejected" name="r{{user.userID}}">Reject<br>
-            </li>
-            {%endfor%}
-        {%endif%}
-    </ul>
-    <button type="submit", name="save", value="save">Submit</button>
+            {%if items%}
+            <caption>Authenticate New Items</caption>
+
+            <th>Item Name</th>
+            <th>Item ID</th>
+            <th>Item Description</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Approve</th>
+            <th>Reject</th>
+                {%for item in items.all%}
+                <tr>
+
+                    <td>{{item.name}}</td>
+                    <td>{{item.itemID}}</td>
+                    <td>{{item.description}}.</td>
+                    <td>${{item.price}}</td>
+                    <td><img src="{{item.image.url | slice:"5:"}}" alt="Product Image" height = 50></td>
+                    <td><input type="checkbox" value="approved" name="a{{item.itemID}}">Accept</td>
+                    <td> <input type="checkbox" value="rejected" name="r{{item.itemID}}">Reject</td>
+                </tr>
+
+                {%endfor%}
+
+            {%else%}
+            <caption>Authenticate New Items</caption>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Approve</th>
+                <th>Reject</th>
+
+                {%for user in users.all%}
+                <tr>
+                    <td>{{user.userID}}</td>
+                    <td>{{user.username}}</td>
+                    <td>
+                        {%if user.role == 1%}
+                            Buyer
+                        {%elif user.role == 2%}
+                            Seller
+                        {%elif user.role == 3%}
+                            Admin
+                        {%else%}
+                            Rejected Account
+                        {%endif%}
+                    </td>                    <td>{{user.email}}</td>
+                    <td>{{user.balance}}</td>
+                    <td><input type="checkbox" value="approved" name="a{{user.userID}}">Accept</td>
+                    <td><input type="checkbox" value="rejected" name="r{{user.userID}}">Reject</td>
+                </tr>
+                {%endfor%}
+            {%endif%}
+        <button type="submit", name="save", value="save">Submit</button>
+    </table>
     </form>
 {%endif%}
 

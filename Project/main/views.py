@@ -223,6 +223,7 @@ def authItems(request, UserID=0):
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
         
     items = Item.objects.filter(approved=False)
+    items = items.filter(~Q(price=float(0)))
     if request.method == "POST":
         if request.POST.get("save"):
             for item in items.all():
@@ -231,7 +232,10 @@ def authItems(request, UserID=0):
                     item.save()
 
                 elif request.POST.get("r" + str(item.itemID)) == "rejected":
-                    item.price = 0
+                    item.price = 0.0
+                    
+                    item.save()
+
         
     return render(request, "adminAuth.html", context={"items":items, "userData":userData})
 
@@ -507,6 +511,7 @@ def monitorItems(request, UserID=0):
     sellers = []
     sellerIDs = []
     sellerItems = Item.objects.filter(approved=True)
+    sellerItems = sellerItems.filter(~Q(price=0))
 
     for item in sellerItems.all():
         if(not item.seller.userID in sellerIDs):
@@ -520,6 +525,7 @@ def monitorItems(request, UserID=0):
 
 
                     item.price = 0
+                    item.save()
                 print(item.name)
 
     return render(request, "adminMonitor.html", context={"userData":userData, "sellers":sellers})
@@ -537,6 +543,7 @@ def monitorUsers(request, UserID=0):
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     users = User.objects.filter(approved=True)
+    users = users.filter(~Q(role=0))
 
     if request.method == "POST":
         for user in users:
