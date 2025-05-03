@@ -66,28 +66,42 @@
         </div>
 
     {%elif userData.role == 3%}
-    <ul>
-        {%for order in orders%}
-            <li><h3>Order ID: {{order.first.orderID}}</h3>
-            <h3>Date Bought: {{order.first.date_bought}}</h3>
-            <h3>Buyer Name: {{order.first.buyer}}</h3>
-            <h3>Buyer ID: {{order.first.buyer.userID}}</h3>
-            {%for item in order%}
-                <ul>
-                    <li>Product ID: {{item.item.itemID}}</li>
-                    <li>Product Name: {{item.item.name}}</li>
-                    <li>Seller Name: {{item.item.seller}}</li>
-                    <li>Seller ID: {{item.item.seller.userID}}</li>
-                    <li>Stock: {{item.item.stock}}</li>
-                    <li>Amount: {{item.amount}}</li>
-                    <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
-                </ul>
-                <br>
-            {%endfor%}
-            <h3>total: ${{order.first.totalPrice}}</h3></li>
-          {%endfor%}
-        </ul>
+        <div class='buyer-orders-container'>
+            <h1 class='orders-title'>Transactions</h1>
+            {%for order in orders%}
+                <div class='order-card'>
+                    <div class='order-header'>
+                        <div class='order-info'>
+                            <span class='order-id'>Order ID: {{order.first.orderID}}</span>
+                            <span class='order-date'>Date: {{order.first.date_bought}}</span>
+                            <span class='order-date'>Buyer Name: {{order.first.buyer}}</span>
+                            <span class='order-date'>Buyer ID: {{order.first.buyer.userID}}</span>
 
+                        </div>
+                    </div>
+                    <div class='order-items'>
+                        {%for item in order%}
+                            <div class='order-item'>
+                                <div class='item-details'>
+                                    <h4>Product Name: {{item.item.name}}</h4>
+                                    <h4>Product ID: {{item.item.itemID}}</h4>
+                                    <div class='item-meta'>
+                                        <span>Seller: {{item.item.seller}}</span>
+                                        <span>Seller ID: {{item.item.seller.userID}}</span>
+                                        <span>Stock: {{item.item.stock}}</span>
+                                        <span>Quantity: {{item.amount}}</span>
+                                        <span>Price: ${{item.price}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {%endfor%}
+                    </div>
+                    <div class='order-total'>
+                        <strong>Total: ${{order.first.totalPrice}}</strong>
+                    </div>
+                </div>
+            {%endfor%}
+        </div>
     {%endif%}
 
 
@@ -97,7 +111,7 @@
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-        <h3 style="color: red">{{ message }}</h3></li>
+        <h3>{{ message }}</h3></li>
         {% endfor %}
     </ul>
 

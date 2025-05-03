@@ -1,13 +1,29 @@
 {%extends 'base.html'%}
 {%block content%}
-{%block title%}<h1>Create New Account</h1>{%endblock%}
 
 <form method="POST" action="/create/" >
-    {% csrf_token %}
-    {{form.as_p}}
-    
-    <button type="submit", name="save">Submit</button>
-</form>
+    <div class="form-container">
+        {%block title%}<h1>Create New Account</h1>{%endblock%}
+      
+        <form method="POST" action="">
+          {%csrf_token%}
+          {% for field in form %}
+            <div class="form-field">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="required-star">*</span>
+                {% endif %}
+              </label>
+              {{ field }}
+            </div>
+            {% if forloop.last %}
+              <div class="required-note">* denotes required fields.</div>
+            {% endif %}
+          {% endfor %}
+          <button type="submit" name="save">Login</button>
+        </form>
+      </div>
 {%endblock content%}
 
 {%block msg%}

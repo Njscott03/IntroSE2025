@@ -473,3 +473,8 @@ button.delete-btn:hover {
   margin: 0;                  /* reset the form-container’s top-margin */
   vertical-align: middle;     /* line it up with the input/text */
 }
+
+.messages{
+  color:red;
+  text-align: center;
+}

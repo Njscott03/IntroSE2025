@@ -7,20 +7,9 @@
             {% csrf_token %}
             {%for items in sellers%}
             <br>
-                <table summary="Items">
+                <table class = "order-table" summary="Items">
                     <caption>Seller Name: {{items.first.seller}}&emsp;
                         &emsp;Seller ID:{{items.first.seller.userID}}</caption>
-                    <colgroup>
-                        <col span="2" style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-                        <col style="background-color:cyan">
-
-                        </colgroup>
                     <th>Product ID</th>
                     <th>Name</th>
                     <th>Description</th>
@@ -54,17 +43,8 @@
     {%elif users%}
         <form method="POST" action="">
             {% csrf_token %}
-            <table summary="Users">
+            <table class = "order-table" summary="Users">
                 <caption>Users</caption>
-                <colgroup>
-                    <col span="2" style="background-color:cyan">
-                    <col style="background-color:cyan">
-                    <col style="background-color:cyan">
-                    <col style="background-color:cyan">
-                    <col style="background-color:cyan">
-                    <col style="background-color:cyan">
-
-                </colgroup>
 
                 <th>User ID</th>
                 <th>Username</th>
@@ -104,3 +84,14 @@
     {%endif%}
 
 {%endblock content%}
+
+{%block msg%}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <h3>{{ message }}</h3></li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+{%endblock msg%}

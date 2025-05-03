@@ -68,11 +68,13 @@
           {%endif%}
     </nav>
   </header>
+
 {%if not userData or userData.approved%}
+{%block msg%}
+
+{%endblock msg%}
   {%block content%}
   {%endblock content%}
 
-  {%block msg%}
 
-  {%endblock msg%}
 {%endif%}

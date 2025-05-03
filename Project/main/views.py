@@ -196,6 +196,7 @@ def authUsers(request, UserID=0):
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     users = User.objects.filter(approved=False)
+    users = users.filter(~Q(role=0))
     if request.method == "POST":
         if request.POST.get("save"):
             for user in users.all():
@@ -375,7 +376,7 @@ def viewOrders(request, UserID=0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
         userData.delete()
 
-    orderItems = Order.objects.filter(buyer=userData)
+    orderItems = Order.objects.filter(buyer=userData).order_by('-date_bought')
     orders = []
     for item in orderItems.all():
         if(not item.orderID in orderIDs):
@@ -480,13 +481,12 @@ def sellerViewOrders(request, UserID=0):
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     itemSet = Item.objects.filter(seller=userData)
+    orderSet = Order.objects.all().order_by("-date_bought")
     order = [itemSet.count()]
 
-    for item in itemSet.all():
-        if(Order.objects.filter(item=item).exists()):
-            set = Order.objects.filter(item=item)
-            for orderItem in set:
-                order.append(orderItem)
+    for orderItem in orderSet.all():
+        if orderItem.item in itemSet:
+            order.append(orderItem)
     
 
 
@@ -505,11 +505,13 @@ def monitorItems(request, UserID=0):
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
     sellers = []
+    sellerIDs = []
     sellerItems = Item.objects.filter(approved=True)
 
     for item in sellerItems.all():
-        if(not item.seller in sellers):
+        if(not item.seller.userID in sellerIDs):
             sellers.append(sellerItems.filter(seller=item.seller))
+            sellerIDs.append(item.seller.userID)
     
     if request.method == "POST":
         if request.POST.get("save"):
@@ -560,13 +562,12 @@ def adminViewOrders(request, UserID=0):
         messages.add_message(request, messages.SUCCESS, "This account was rejected by an admin. Please create a new account")
         userData.delete()
 
-    orderItems = Order.objects.all()
+    orderItems = Order.objects.all().order_by("-date_bought")
     orders = []
     for item in orderItems.all():
         if(not item.orderID in orderIDs):
             orderIDs.append(item.orderID)
             orders.append(orderItems.filter(orderID=item.orderID))
-    
 
     return render(request, "seeOrders.html", context={"userData":userData, "orders":orders})
 
