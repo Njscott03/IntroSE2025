@@ -19,7 +19,13 @@
   <!-- Main Content Area: Search bar and product listings placeholder -->
   <main>
     <!-- Search bar moved to topbar -->
-    <h1 style="text-align: center; font-size: 2.5em; margin: 20px 0;">Shop for Less</h1>
+
+    <!-- Shop for Less jingle -->
+    <h1 style="text-align: center; font-size: 2.5em; margin: 20px 0;">
+    Shop for Less
+</h1>
+
+
     {% if userData.role == 1 %}
     <!-- Buyer view: product list with Add to Cart button -->
     <section class="product-listings">
@@ -61,8 +67,9 @@
 
   <!-- Footer Section: Contains footer details -->
   <footer>
-    <p>&copy; 2025 My E-Commerce. All rights reserved.</p>
-  </footer>
+    <div>&copy; 2025 My E-Commerce. All rights reserved.</div>
+    <div>Web App Developed by Nicholas Bryant, Terrance Moncure, Noah Scott, and Caleb Stockton</div>
+  </footer>  
 
   <!-- Link to external JavaScript file if needed -->
   <script src="js/script.js"></script>

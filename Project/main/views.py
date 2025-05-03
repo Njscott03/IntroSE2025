@@ -486,14 +486,12 @@ def sellerViewOrders(request, UserID=0):
     
     itemSet = Item.objects.filter(seller=userData)
     orderSet = Order.objects.all().order_by("-date_bought")
-    order = [itemSet.count()]
+    order = []  
 
     for orderItem in orderSet.all():
         if orderItem.item in itemSet:
             order.append(orderItem)
     
-
-
     return render(request, "seeOrders.html", context={"userData":userData, "order":order})
 
 def monitorItems(request, UserID=0):
