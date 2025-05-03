@@ -1,4 +1,11 @@
 from django import forms
+from django.conf import settings
+from django.contrib.sessions.models import Session
+from datetime import timedelta
+
+# Add session timeout configuration
+settings.SESSION_COOKIE_AGE = timedelta(minutes=30).total_seconds()
+
 class CreateNewAccount(forms.Form):
     username = forms.CharField(max_length=50)
     password = forms.CharField(max_length=200, widget=forms.PasswordInput)
