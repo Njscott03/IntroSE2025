@@ -20,7 +20,12 @@ class Login(forms.Form):
     email = forms.EmailField()
 
 class EditAccount(forms.Form):
-    username = forms.CharField(max_length=50, required=False)
-    password = forms.CharField(max_length=200, widget=forms.PasswordInput, required=False)
-    email = forms.EmailField(required=False)
-    add_money = forms.FloatField(required=False)
+    # hidden fields to keep browser from autofilling saved username and password
+    username = forms.CharField(max_length=50, required=False,
+                               widget=forms.TextInput(attrs={'autocomplete':'new-username'}))
+    password = forms.CharField(max_length=200, required=False,
+                               widget=forms.PasswordInput(attrs={'autocomplete':'new-password'}))
+    email = forms.EmailField(required=False,
+                             widget=forms.EmailInput(attrs={'autocomplete':'off'}))
+    add_money = forms.FloatField(required=False,
+                                widget=forms.NumberInput(attrs={'autocomplete':'off'}))

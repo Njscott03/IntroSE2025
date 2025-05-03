@@ -260,3 +260,216 @@ button {
   border-radius: 4px;
   box-sizing: border-box;
 }
+
+/* Orders table styling */
+.order-table { width: 100%; border-collapse: collapse; background-color: #fff; border: 1px solid #ddd; }
+.order-table th, .order-table td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+.order-table th { background-color: #f5f5f5; }
+
+/* Edit Account form fields */
+.form-field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.form-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.form-field input, .form-field select, .form-field textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Buyer Past Orders Styling */
+.buyer-orders-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.orders-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+.order-card {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    background-color: #f4f4f4;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-info {
+    display: flex;
+    gap: 20px;
+}
+
+.order-id, .order-date {
+    color: #666;
+    font-weight: bold;
+}
+
+.order-items {
+    padding: 15px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-details h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.item-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.order-total {
+    background-color: #f4f4f4;
+    text-align: right;
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+/* Buttons for Edit Account */
+button.delete-btn {
+  width: 100%;
+  background: #e53e3e;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-bottom: 16px;
+}
+button.delete-btn:hover {
+  background: #c53030;
+}
+.btn {
+  width: 100%;
+  background: #4A5568;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+.btn:hover {
+  background: #2D3748;
+}
+
+/* Display of current form field values */
+.current-value {
+  font-style: italic;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+/* Cart page styling */
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cart-card {
+  display: flex;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  align-items: center;
+  gap: 16px;
+}
+.cart-card .item-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.cart-details {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.qty-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty-label {
+  font-weight: bold;
+}
+.qty-input {
+  width: 60px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.small-btn {
+  background: #3182ce;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.small-btn:hover {
+  background: #2b6cb0;
+}
+.make-order-btn {
+  margin-top: 16px;
+  width: 100%;
+  background: #2f855a;
+}
+.make-order-btn:hover {
+  background: #276749;
+}
+/* override the block-level rule for the “Change” button */
+.cart-details .qty-wrapper button {
+  display: inline-block;     /* restore it to inline-block */
+  margin: 0;                  /* reset the form-container’s top-margin */
+  vertical-align: middle;     /* line it up with the input/text */
+}

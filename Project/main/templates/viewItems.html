@@ -2,62 +2,58 @@
 {%block content%}
 {%block title%}<h1>Products</h1>{%endblock title%}
 
-    <form method="POST" enctype="multipart/form-data" action="items">
-        {% csrf_token %}
-        <table summary="Items">
-            <colgroup>
-                <col span="2" style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
-                <col style="background-color:cyan">
+<style>
+  .table-container { padding: 0 20px; overflow-x: auto; }
+  .product-table { width: 100%; border-collapse: collapse; background-color: #fff; }
+  .product-table th, .product-table td { padding: 12px; text-align: left; vertical-align: middle; border-bottom: 1px solid #ddd; }
+  .product-table img { max-width: 150px; height: auto; display: block; margin: auto; }
+</style>
+<div class="table-container">
+  <form method="POST" enctype="multipart/form-data" action="items">
+    {% csrf_token %}
+    <table summary="Items" class="product-table">
+      <th>Image</th>
+      <th>Product ID</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Stock</th>
+      <th>Price</th>
+      <th>Date Added</th>
+      <th>Approved</th>
 
-              </colgroup>
-            <th>Product ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Stock</th>
-            <th>Price</th>
-            <th>Date Added</th>
-            <th>Image</th>
-            <th>Approved</th>
-
-            {%for item in items.all%}
-                <tr>
-                    <td>{{item.itemID}}</td>
-                <td>{{item.name}}
-                    <input type="text" id="name-input" placeholder="New Name" name="n{{item.itemID}}" value="">
-                </td>
-                <td>{{item.description}}
-                    <input type="text" id="desc-input" placeholder="New Desc" name="d{{item.itemID}}" value="">
-                </td>
-                <td>{{item.category}}
-                    <input type="text" id="category-input" placeholder="New Category" name="c{{item.itemID}}" value="">
-                </td>
-                <td>{{item.stock}}
-                    <input type="number" id="stock-input" placeholder="New Stock" name="s{{item.itemID}}" min=0>
-                </td>
-                <td>${{item.price}}
-                    <input type="number" id="price-input" placeholder="New Price" name="p{{item.itemID}}" min=0>
-                </td>
-                <td>{{item.date_added}}</td>
-                <td><img src="{{item.image.url | slice:"5:"}}" alt="Product Image" height = 50>
-                </td>
-                <td>{{item.approved}}</td>
-            </tr>
-            {%endfor%}
-        </table>
-        <button type="submit", name="save", value="save">Save Changes</button>
-    </form>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <h3 style="color: red">{{ message }}</h3></li>
-        {% endfor %}
-    </ul>
-    {%endif%}
+      {%for item in items.all%}
+        <tr>
+          <td><img src="{{item.image.url | slice:"5:"}}" alt="Product Image"></td>
+          <td>{{item.itemID}}</td>
+          <td>{{item.name}}
+            <input type="text" id="name-input" placeholder="New Name" name="n{{item.itemID}}" value="">
+          </td>
+          <td>{{item.description}}
+            <input type="text" id="desc-input" placeholder="New Desc" name="d{{item.itemID}}" value="">
+          </td>
+          <td>{{item.category}}
+            <input type="text" id="category-input" placeholder="New Category" name="c{{item.itemID}}" value="">
+          </td>
+          <td>{{item.stock}}
+            <input type="number" id="stock-input" placeholder="New Stock" name="s{{item.itemID}}" min=0>
+          </td>
+          <td>${{item.price}}
+            <input type="number" id="price-input" placeholder="New Price" name="p{{item.itemID}}" min=0>
+          </td>
+          <td>{{item.date_added}}</td>
+          <td>{{item.approved}}</td>
+        </tr>
+      {%endfor%}
+    </table>
+    <button type="submit", name="save", value="save">Save Changes</button>
+  </form>
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <h3 style="color: red">{{ message }}</h3></li>
+    {% endfor %}
+  </ul>
+  {%endif%}
+</div>
 {%endblock content%}

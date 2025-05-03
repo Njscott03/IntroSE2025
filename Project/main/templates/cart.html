@@ -1,27 +1,33 @@
 {%extends 'base.html'%}
 {%block content%}
-{%block title%}<h1>Cart</h1>{%endblock title%}
+<div class="form-container">
+  {%block title%}<h1>Your Shopping Cart</h1>{%endblock title%}
 
-    <form method = "POST" action="">
-        {% csrf_token %}
-
-        {%for item in cart%}
-            <ul>
-                <li>Product ID: {{item.item.itemID}}</li>
-                <li>Product Name: {{item.item.name}}</li>
-                <li>Stock: {{item.item.stock}}</li>
-                <li>Amount: {{item.amount}}
-                    <input type="number" name="v{{item.id}}" placeholder="New Amount" min=0 max={{item.item.stock}}>
-                    <button type="submit" name="changeAmount" value="changeAmount">Change Amount</button>
-
-                </li>
-                <li>Price: ${{item.price}} = ${{item.item.price}} x {{item.amount}}</li>
-            </ul>
-        {%endfor%}
-        <div class="btn">
-        <button type="submit" name="makeOrder" value="makeOrder">Make Order</button>
-        </div>
-    </form>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="cart-list">
+      {% for item in cart %}
+      <div class="cart-card">
+        <img src="{{ item.item.image.url|slice:'5:' }}" alt="{{ item.item.name }}" class="item-img"/>
+        <ul class="cart-details">
+          <li>Product ID: {{ item.item.itemID }}</li>
+          <li>Product Name: {{ item.item.name }}</li>
+          <li class="qty-item">
+            <div class="qty-wrapper">
+              <span class="qty-label">Quantity: {{ item.amount }}</span>
+              <input type="number" name="v{{ item.id }}" class="qty-input" placeholder="New Amount" min="0" max="{{ item.item.stock }}" />
+              <button type="submit" name="changeAmount" value="changeAmount" class="small-btn">Change</button>
+            </div>
+          </li>
+          <li>Stock: {{ item.item.stock }}</li>
+          <li>Price: {{ item.price }} = {{ item.item.price }} x {{ item.amount }}</li>
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    <button type="submit" name="makeOrder" value="makeOrder" class="btn make-order-btn">Make Order</button>
+  </form>
+</div>
 {%endblock content%}
 
 {%block msg%}

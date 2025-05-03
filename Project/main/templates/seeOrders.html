@@ -1,38 +1,70 @@
 {% extends "base.html" %}
 {%block content%}
     {%if userData.role == 1%}
-        <ul>
-        {%for order in orders%}
-            <li><h3>Order ID: {{order.first.orderID}}</h3>
-            <h3>Date Bought: {{order.first.date_bought}}</h3>
-            {%for item in order%}
-                <ul>
-                    <li>Product ID: {{item.item.itemID}}</li>
-                    <li>Product Name: {{item.item.name}}</li>
-                    <li>Seller: {{item.item.seller}}</li>
-                    <li>Stock: {{item.item.stock}}</li>
-                    <li>Amount: {{item.amount}}</li>
-                    <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
-                </ul>
-                <br>
+        <div class='buyer-orders-container'>
+            <h1 class='orders-title'>My Past Orders</h1>
+            {%for order in orders%}
+                <div class='order-card'>
+                    <div class='order-header'>
+                        <div class='order-info'>
+                            <span class='order-id'>Order ID: {{order.first.orderID}}</span>
+                            <span class='order-date'>Date: {{order.first.date_bought}}</span>
+                        </div>
+                    </div>
+                    <div class='order-items'>
+                        {%for item in order%}
+                            <div class='order-item'>
+                                <div class='item-details'>
+                                    <h4>{{item.item.name}}</h4>
+                                    <div class='item-meta'>
+                                        <span>Seller: {{item.item.seller}}</span>
+                                        <span>Quantity: {{item.amount}}</span>
+                                        <span>Price: ${{item.price}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {%endfor%}
+                    </div>
+                    <div class='order-total'>
+                        <strong>Total: ${{order.first.totalPrice}}</strong>
+                    </div>
+                </div>
             {%endfor%}
-            <h3>total: ${{order.first.totalPrice}}</h3></li>
-          {%endfor%}
-        </ul>
+        </div>
 
     {%elif userData.role == 2%}
-        {%for item in order%}
-            <h3>Bought by {{item.buyer.username}} on {{item.date_bought}}<br></h3>
+        <h1 style="text-align:center; font-size:2em; margin:20px 0;">Sales Overview</h1>
+        <div class="table-container">
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Buyer</th>
+                <th>Date Bought</th>
+                <th>Order ID</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Stock</th>
+                <th>Amount</th>
+                <th>Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in order%}
+              <tr>
+                <td>{{item.buyer.username}}</td>
+                <td>{{item.date_bought}}</td>
+                <td>{{item.orderID}}</td>
+                <td>{{item.item.itemID}}</td>
+                <td>{{item.item.name}}</td>
+                <td>{{item.item.stock}}</td>
+                <td>{{item.amount}}</td>
+                <td>${{item.price}}</td>
+              </tr>
+              {%endfor%}
+            </tbody>
+          </table>
+        </div>
 
-            <ul>
-                <li>Order ID: {{item.orderID}}</li>
-                <li>Product ID: {{item.item.itemID}}</li>
-                <li>Product Name: {{item.item.name}}</li>
-                <li>Stock: {{item.item.stock}}</li>
-                <li>Amount: {{item.amount}}</li>
-                <li>Price: {{item.price}} = {{item.item.price}} x {{item.amount}}</li>
-            </ul>
-        {%endfor%}
     {%elif userData.role == 3%}
     <ul>
         {%for order in orders%}

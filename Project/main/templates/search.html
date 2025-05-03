@@ -2,26 +2,31 @@
 {% block content%}
 
 
-<form method = "POST" action="">
-  {% csrf_token %}
-  {% for item in items %}
-  <section class="product-listings">
-      <!-- Example Product Card -->
-      <article class="product-card">
-        <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
-        <h2>{{item.name}}</h2>
-        <p>{{item.description}}.</p>
-        <p class="price">${{item.price}}</p>
-
-        {%if userData%}
-          <button type="submit" name ="c{{item.itemID}}" value="c{{item.itemID}}">Add to Cart</button>
-          <input type="number" id="amount-input" placeholder="Amount" name="amount" value=1 min=1 max={{item.stock}}>
-        </article>
-      {%endif%}
-      <!-- Additional product cards will be dynamically added here -->
-    </section>
-  {% endfor %}
+<form method = "POST">
+    {% csrf_token %}
+<!-- old search box i'm leaving in case I need it
+<input type="text" id="search-input" placeholder="Search for products..." name="search" value="search">
+<button id="search-btn" type="submit" name="submitSearch">Search</button>
 </form>
+-->
+{% for item in items %}
+<section class="product-listings">
+    <!-- Example Product Card -->
+    <article class="product-card">
+      <img src="{{item.image.url | slice:"5:"}}" alt="Product Image" width = 200>
+      <h2>{{item.name}}</h2>
+      <p>{{item.description}}.</p>
+      <p class="price">${{item.price}}</p>
+      <form method="POST" action="/{% if userData %}{{ userData.userID }}{% endif %}/add_to_cart/{{ item.itemID }}/">
+        {% csrf_token %}
+        <input type="number" name="amount" min="1" value="1" />
+        <button type="submit">Add to Cart</button>
+      </form>
+      <input type="number" id="amount-input" placeholder="Amount" name="amount" value=1 min=1 max={{item.stock}}>
+    </article>
+    <!-- Additional product cards will be dynamically added here -->
+  </section>
+{% endfor %}
 
 {% endblock content %}
 

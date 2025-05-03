@@ -1,39 +1,33 @@
 {% extends "base.html" %}
 {% block content%}
-<form methd = "POST" action="edit/delete">
+<div class="form-container">
+  {%block title%}<h1>Edit Account</h1>{%endblock title%}
+  <form method="POST" action="edit/delete" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
     {% csrf_token %}
-
-    <button type="submit">Delete Account</button>
-
-</form>
-<form method="POST" action="">
+    <button type="submit" class="delete-btn">Delete Account</button>
+  </form>
+  <form method="POST" action="" autocomplete="off">
     {% csrf_token %}
-    <ul>
-        <li>
-            <label for="{{ form.username.id_for_label }}">New Username: </label>
-            {{form.username}}
-        </li>
-    <br>
-        <li>
-            <label>New Email: </label>
-            {{form.email}}
-        </li>
-    <br>
-        <li>
-            <label>New Password: </label>
-            {{form.password}}     
-        </li>
-    <br>
-        <li>
-            <label>Add to Balance of ${{userData.balance}}: </label>
-            {{form.add_money}}
-        </li>
-    </ul>
-
-    <br><button type="submit", name="save", value="save">Submit</button>
-
-</form>
-
+    {% for field in form %}
+      <div class="form-field">
+        <label for="{{ field.id_for_label }}">
+          {% if field.name == 'username' %}
+            {{ field.label }} (current: {{ userData.username }})
+          {% elif field.name == 'email' %}
+            {{ field.label }} (current: {{ userData.email }})
+          {% elif field.name == 'add_money' %}
+            {{ field.label }} (current balance: ${{ userData.balance }})
+          {% else %}
+            {{ field.label }}
+          {% endif %}
+          {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+        </label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn">Save Changes</button>
+  </form>
+</div>
 {%endblock content%}
 
 {%block msg%}

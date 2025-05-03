@@ -167,8 +167,8 @@ def createItem(request, UserID=0):
             category = request.POST.get("category")
             image = request.FILES.get("image")
             description = request.POST.get("description")
-            price = request.POST.get("price")
-            stock = request.POST.get("stock")
+            price = float(request.POST.get("price"))
+            stock = int(request.POST.get("stock"))
             newItem = Item(seller=userData, name=name, category=category, description=description, price=round(price, 2), stock=stock, image=image)
             while(not idIsValid):
                 newItem.itemID = random.randint(0, 1000000000)
@@ -272,9 +272,9 @@ def viewProducts(request, UserID=0):
                 if category != "":
                     item.category = category
                 if stock != '':
-                    item.stock = stock
+                    item.stock = int(stock)
                 if price != '':
-                    item.price = round(price, 2)
+                    item.price = round(float(price), 2)
                 item.save()
                 
 
@@ -460,6 +460,10 @@ def editAccount(request, UserID=0):
 
     else:
         form = EditAccount(request.POST)
+        # disable browser autocomplete on all form fields
+        for fname in ['username', 'email', 'password', 'add_money']:
+            if fname in form.fields:
+                form.fields[fname].widget.attrs.update({'autocomplete': 'off'})
     
     return render(request, "editAccount.html", context = {"userData":userData, "form":form})
 
