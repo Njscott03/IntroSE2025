@@ -9,7 +9,9 @@ from .models import Item
 # Create your views here.
 def home(request):
     # show first 20 approved products alphabetically on homepage
-    items = Item.objects.filter(approved=True).order_by('name')[:20]
+    items = Item.objects.filter(~Q(price=0.0))
+    items = items.filter(approved=True).order_by('name')[:20]
+    
     return render(request, "index.html", {'items': items})
 
 def mainpage(request, userID=0):
@@ -21,10 +23,12 @@ def mainpage(request, userID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":userID, "items":items})
 
-    items = Item.objects.filter(approved=True).order_by('name')[:20]
+    items = Item.objects.filter(~Q(price=0.0))
+    items = items.filter(approved=True).order_by('name')[:20]
 
     return render(request, "index.html", {"userData": userData, "items": items})
 
@@ -78,11 +82,13 @@ def search(request, UserID = 0, searchTerm = ''):
                 userData.delete()
         except User.DoesNotExist:
             userData = 0
-            items = Item.objects.filter(approved=True).order_by('name')[:20]
+            items = Item.objects.filter(~Q(price=0.0))
+            items = items.filter(approved=True).order_by('name')[:20]
             return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
     items = Item.objects.filter(approved=True)
-    items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+    items = items.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
+    items = items.filter(~Q(price=0.0))
 
     if(request.method == "POST"):
         if(request.POST.get("searchSubmit")):
@@ -90,6 +96,8 @@ def search(request, UserID = 0, searchTerm = ''):
             if(searchTerm != ''):
                 items = Item.objects.filter(Q(name__contains = searchTerm) | Q(category__contains = searchTerm))
                 items = items.filter(approved=True)
+                items = items.filter(~Q(price=float(0.0)))
+
             if(UserID == 0):
                 return HttpResponseRedirect("/search/%s" % (searchTerm))
             else:
@@ -154,7 +162,8 @@ def createItem(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     idIsValid = False
@@ -192,7 +201,8 @@ def authUsers(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     users = User.objects.filter(approved=False)
@@ -219,7 +229,8 @@ def authItems(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
         
     items = Item.objects.filter(approved=False)
@@ -247,7 +258,8 @@ def viewProducts(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
 
@@ -295,7 +307,8 @@ def viewCart(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
 
@@ -330,9 +343,9 @@ def viewCart(request, UserID=0):
                     order = Order(orderID = orderID, item=item.item, buyer = userData,
                                    price=round(item.price, 2), amount=item.amount, totalPrice=round(sum, 2))
                     item.item.stock -= int(amount)
-                    seller.balance += sum
-                    userData.balance -= sum
-                    
+                    seller.balance += round(item.item.price * item.amount, 2)
+                    userData.balance -= round(item.item.price * item.amount, 2)
+
                     seller.balance = round(seller.balance, 2)
                     userData.balance = round(userData.balance, 2)
 
@@ -341,6 +354,7 @@ def viewCart(request, UserID=0):
                     seller.save()
                     order.save()
                     item.delete()
+
             return HttpResponseRedirect("/%i/buy/cart" % userData.userID)
 
                 
@@ -358,7 +372,7 @@ def viewCart(request, UserID=0):
                     item.amount = amount
                     item.price = round(float(item.amount) * float(item.item.price), 2)
                     item.save()
-            return HttpResponseRedirect("")
+            return HttpResponseRedirect("/%i/buy/cart" % userData.userID)
                     
 
     return render(request, "cart.html", context={"userData":userData, "cart":cart})
@@ -372,7 +386,8 @@ def viewOrders(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
         
     orderIDs = []
@@ -399,7 +414,8 @@ def add_to_cart(request, UserID=0, itemID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
     if userData.role != 1:
@@ -430,7 +446,8 @@ def editAccount(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
     if(userData.role == 0):
@@ -481,7 +498,8 @@ def sellerViewOrders(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     itemSet = Item.objects.filter(seller=userData)
@@ -503,7 +521,8 @@ def monitorItems(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
 
     sellers = []
@@ -524,7 +543,7 @@ def monitorItems(request, UserID=0):
 
                     item.price = 0
                     item.save()
-                print(item.name)
+            HttpResponseRedirect("/%i/auth/monitorItems" % userData.userID)
 
     return render(request, "adminMonitor.html", context={"userData":userData, "sellers":sellers})
 
@@ -537,7 +556,8 @@ def monitorUsers(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     users = User.objects.filter(approved=True)
@@ -547,6 +567,8 @@ def monitorUsers(request, UserID=0):
         for user in users:
             if(request.POST.get("r" + str(user.userID)) == "remove"):
                 user.role = 0
+                user.save()
+        HttpResponseRedirect("/%i/auth/monitorUsers" % userData.userID)
     
     return render(request, "adminMonitor.html", context={"userData":userData, "users":users})
 
@@ -559,7 +581,8 @@ def adminViewOrders(request, UserID=0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
         
     orderIDs = []
@@ -585,7 +608,8 @@ def deleteAccount(request, UserID = 0):
             userData.delete()
     except User.DoesNotExist:
         userData = 0
-        items = Item.objects.filter(approved=True).order_by('name')[:20]
+        items = Item.objects.filter(~Q(price=0.0))
+        items = items.filter(approved=True).order_by('name')[:20]
         return render(request, "index.html", {"userData": userData, "userID":UserID, "items":items})
     
     if(request.method == "POST"):
